@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.board.mapper.BoardMapper">
+    <insert id="boardInsert" parameterType="com.board.domain.BoardVO">
+        <selectKey resultType="int" keyProperty="bno" order="BEFORE">
+            SELECT IFNULL(MAX(bno),0)+1 FROM board_pro
+        </selectKey>
+        insert into board_pro
+            values
+        (#{bno},#{subject},#{content},#{writer},now(),0)
+    </insert>
+
+    <select id="boardList" resultType="com.board.domain.BoardVO" parameterType="com.board.domain.BoardVO">
+        select * from board_pro
+        <if test="searchText != null or searchText != ''">
+        where subject LIKE '%${searchText}%'
+        </if>
+    </select>
+
+    <delete id="boardDelete" parameterType="int">
+        delete from board_pro
+        where bno = #{bno}
+    </delete>
+
+    <select id="boardView" resultType="com.board.domain.BoardVO">
+        select * from board_pro
+        where bno = #{bno}
+    </select>
+
+    <update id="boardUpdate" parameterType="com.board.domain.BoardVO">
+      update board_pro set
+        subject = #{subject},
+        content = #{content},
+        writer = #{writer}
+      where bno = #{bno}
+    </update>
+</mapper>
